@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Droid Sans", "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #000 url(//cssanimation.rocks/demo/starwars/images/bg.jpg);
+}
+
+h1,h2 {
+  color: #ff2400;
+  margin-top: 25px;
+}
+
+
+label {
+  color: #ebd800;
+}
+
+.error {
+  color: #ff2400;
+}
+
+div.text {
+  color: #fafafa;
+  text-align: left;
+}
+
+div.header {
+  margin-top: 40px;
+}
