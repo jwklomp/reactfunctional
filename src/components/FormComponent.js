@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import * as DataUtils from './../utils/DataUtils'
+import { getInputValue } from './../utils/InputUtils'
 
 // Using React.memo causes Component only to rerender when the props change. 
 const FormComponent = React.memo(props => {
@@ -8,13 +9,15 @@ const FormComponent = React.memo(props => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSetSubject = e => {
-    setSubject(e.target.value);
+    const value = getInputValue(e);
+    setSubject(value);
     setSearchTerm("");    
-    props.onChange(e.target.value, "");
+    props.onChange(value, "");
   }     
   const handleSearchTerm = e => {
-    setSearchTerm(e.target.value);
-    props.onChange(subject, e.target.value);
+    const value = getInputValue(e);
+    setSearchTerm(value);
+    props.onChange(subject, value);
   }
 
   return (

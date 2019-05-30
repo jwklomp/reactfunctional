@@ -1,3 +1,5 @@
+import { map, pick, pathOr } from 'ramda';
+import { Future } from 'ramda-fantasy'
 /**
  * Desired data fields per Star Wars Subject. See https://swapi.co/documentation
  */
@@ -38,27 +40,11 @@ export const subjects = [
     key: "vehicles",
     value: "Vehicles"
   }
-]        
+]
 
-/**
- * Picks the properties from an object, based on an array of keys, and returns a new object containing only those keys
- * @param {object} obj the object to 
- * @param {array} keys array of the object keys that are desired
- * @returns {object} 
- */
-const pick = (obj, keys) =>
-  keys.map(k => k in obj ? { [k]: obj[k] } : {})
-    .reduce((res, o) => Object.assign(res, o), {});
-
-/**
- * Take an array of objects and depending on the subject, pick the propierties that are desired. Returns a new array. 
- * @param {string} subject 
- * @param {array} input
- * @returns {array} 
- */
-const mapResult = (subject, input = []) => {
+const resultMapper = subject => {
   const fieldsOfSubject = fieldsPerSubjectMap.get(subject);
-  return input.map(entry => pick(entry, fieldsOfSubject))
+  return map(entry => pick(fieldsOfSubject, entry))
 }
 
 /**
@@ -69,10 +55,15 @@ const mapResult = (subject, input = []) => {
  * @param {function} onError
  */
 export const getStarWarsData = (subject, searchTerm, onSuccess, onError) =>
-  fetch(`https://swapi.co/api/${subject}/?search=${searchTerm}`)
-    .then(res => res.json())
-    .then(
-      result => onSuccess(mapResult(subject, result.results)),
-      error => onError(error)
-    );
+  fetchStarWarsData(subject, searchTerm)
+    .map(result =>
+      onSuccess(resultMapper(subject)(pathOr([], ["results"], result)))
+    )
+    .fork(e => onError(e), r => r);
 
+const fetchStarWarsData = (subject, searchTerm) =>
+  Future((reject, resolve) => {
+    fetch(`https://swapi.co/api/${subject}/?search=${searchTerm}`)
+      .then(r => r.status === 200 ? r.json().then(json => resolve(json)) : reject(r))
+      .catch(e => reject(e))
+  });
